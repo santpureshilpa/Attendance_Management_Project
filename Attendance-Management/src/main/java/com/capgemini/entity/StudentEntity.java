@@ -1,24 +1,18 @@
 package com.capgemini.entity;
 
 import java.sql.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 
@@ -28,13 +22,15 @@ public class StudentEntity {
 	
 	@Id
 	@Column(name = "roll_no")
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator="students_generations")
+	@SequenceGenerator(name="students_generations", sequenceName = "students_sequences", allocationSize=1)	
 	private int studentId;
 	
 	@Column(name = "first_name")
 	@NotEmpty
-	@Size(min=2,message="Not a valid first name")
+	@Size(min=2, message="Not a valid first name")
 	private String firstName;
+	
 	
 	@Column(name = "last_name")
 	@NotEmpty
@@ -44,16 +40,17 @@ public class StudentEntity {
 	@Column(name = "DOB")
 	private Date dateOfBirth;
 	
+	@NotEmpty
+	@Pattern(regexp="^(?:m|M|male|Male|f|F|female|Female)$", message="Invalid Entry")
 	private String gender;
 	
 	@Column(name = "mobile_no")
-	@NotNull
-	@Min(value = 99999999, message="invalid number")
-	@Max(value = 999999999, message="invalid number")
-	private long mobileNumber;
+	@NotEmpty
+	@Pattern(regexp="(^[6-9][0-9]{9}$)", message="Invalid Mobile Number")
+	private String mobileNumber;
 	
-	@NotNull
-	private int semester;
+	@NotEmpty
+	private String semester;
 	
 	@Column(name = "email_id")
 	@Email(message = "invalid email")
@@ -64,13 +61,14 @@ public class StudentEntity {
 	private String fatherEmailId;
 	
 	@Column(name = "father_mobile_number")
-	@NotNull
-	@Min(value = 99999999, message="invalid number")
-	@Max(value = 999999999, message="invalid number")
-	private long fatherMobileNumber;
+	@NotEmpty
+	@Pattern(regexp="(^[6-9][0-9]{9}$)", message="Invalid Mobile Number")
+	private String fatherMobileNumber;
 	
+	@NotNull
 	private int subjectId;
 	
+	@NotEmpty
 	private String subjectName;
 
 	public int getId() {
@@ -113,19 +111,19 @@ public class StudentEntity {
 		this.gender = gender;
 	}
 
-	public long getMobileNumber() {
+	public String getMobileNumber() {
 		return mobileNumber;
 	}
 
-	public void setMobileNumber(long mobileNumber) {
+	public void setMobileNumber(String mobileNumber) {
 		this.mobileNumber = mobileNumber;
 	}
 
-	public int getSemester() {
+	public String getSemester() {
 		return semester;
 	}
 
-	public void setSemester(int semester) {
+	public void setSemester(String semester) {
 		this.semester = semester;
 	}
 
@@ -145,11 +143,11 @@ public class StudentEntity {
 		this.fatherEmailId = fatherEmailId;
 	}
 
-	public long getFatherMobileNumber() {
+	public String getFatherMobileNumber() {
 		return fatherMobileNumber;
 	}
 
-	public void setFatherMobileNumber(long fatherMobileNumber) {
+	public void setFatherMobileNumber(String fatherMobileNumber) {
 		this.fatherMobileNumber = fatherMobileNumber;
 	}
 
@@ -168,57 +166,13 @@ public class StudentEntity {
 	public void setSubjectName(String subjectName) {
 		this.subjectName = subjectName;
 	}
-	
-	@ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.ALL)
-	private FacultyEntity faculty;
-	
-	@OneToMany(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
-	private List<AttendanceEntity> AttdList;
-	
-	
-	@OneToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
-	private CourseEntity course;
-	
-
-	public int getStudentId() {
-		return studentId;
-	}
-
-	public void setStudentId(int studentId) {
-		this.studentId = studentId;
-	}
-
-	public FacultyEntity getFaculty() {
-		return faculty;
-	}
-
-	public void setFaculty(FacultyEntity faculty) {
-		this.faculty = faculty;
-	}
-
-	public CourseEntity getCourse() {
-		return course;
-	}
-
-	public void setCourse(CourseEntity course) {
-		this.course = course;
-	}
-
-	public List<AttendanceEntity> getAttdList() {
-		return AttdList;
-	}
-
-	public void setAttdList(List<AttendanceEntity> attdList) {
-		AttdList = attdList;
-	}
 
 	@Override
 	public String toString() {
-		return "StudentEntity [studentId=" + studentId + ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", dateOfBirth=" + dateOfBirth + ", gender=" + gender + ", mobileNumber=" + mobileNumber
-				+ ", semester=" + semester + ", emailId=" + emailId + ", fatherEmailId=" + fatherEmailId
-				+ ", fatherMobileNumber=" + fatherMobileNumber + ", subjectId=" + subjectId + ", subjectName="
-				+ subjectName + ", faculty=" + faculty + ", AttdList=" + AttdList + ", course=" + course + "]";
+		return "StudentEntity [studentId=" + studentId + ", firstName=" + firstName + ", lastName=" + lastName + ", dateOfBirth="
+				+ dateOfBirth + ", gender=" + gender + ", mobileNumber=" + mobileNumber + ", semester=" + semester
+				+ ", emailId=" + emailId + ", fatherEmailId=" + fatherEmailId + ", fatherMobileNumber="
+				+ fatherMobileNumber + ", subjectId=" + subjectId + ", subjectName=" + subjectName + "]";
 	}
 	
 }

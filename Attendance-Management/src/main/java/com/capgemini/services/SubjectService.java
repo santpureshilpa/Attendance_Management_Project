@@ -1,6 +1,9 @@
 package com.capgemini.services;
 
 import java.util.List;
+import java.util.Optional;
+
+import org.springframework.http.ResponseEntity;
 
 import com.capgemini.entity.SubjectEntity;
 import com.capgemini.exception.DuplicateRecordException;
@@ -21,6 +24,6 @@ public interface SubjectService {
 
 	String deleteSubById(int subjectId) throws RecordNotFoundException;
 
-	
+	SubjectEntity findSubjectByName(String subjectName);
 
 }

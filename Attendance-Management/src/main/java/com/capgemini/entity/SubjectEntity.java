@@ -1,7 +1,6 @@
+
 package com.capgemini.entity;
 
-
-import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,12 +9,11 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
@@ -23,7 +21,8 @@ import javax.validation.constraints.Size;
 public class SubjectEntity {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator="subjects_generations")
+	@SequenceGenerator(name="subjects_generations", sequenceName = "subjects_sequences", allocationSize=1)	
 	private int subjectId;
 	
 	@Column(name="subject_name")
@@ -31,19 +30,24 @@ public class SubjectEntity {
 	@Size(max = 15, message = "Not a valid subject name")
 	private String subjectName;
 	
-	@NotNull
+	@NotEmpty
 	private String subject_semester;
 	
 	@NotEmpty
-	@Size(max=50)
+	@Size(max = 50)
 	private String description;
 	
-	
 	@ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.ALL)
+	@JoinColumn(name="courseId")
 	private CourseEntity Course;
-	
-	@ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
-	private FacultyEntity faculty;
+
+	public CourseEntity getCourse() {
+		return Course;
+	}
+
+	public void setCourse(CourseEntity course) {
+		Course = course;
+	}
 
 	public int getSubjectId() {
 		return subjectId;
@@ -68,7 +72,7 @@ public class SubjectEntity {
 	public void setSubject_semester(String subject_semester) {
 		this.subject_semester = subject_semester;
 	}
-
+	
 	public String getDescription() {
 		return description;
 	}
@@ -77,29 +81,26 @@ public class SubjectEntity {
 		this.description = description;
 	}
 
-	public CourseEntity getCourse() {
-		return Course;
-	}
-
-	public void setCourse(CourseEntity course) {
+	public SubjectEntity(int subjectId,
+			@NotEmpty @Size(max = 15, message = "Not a valid subject name") String subjectName,
+			@NotEmpty String subject_semester, @NotEmpty @Size(max = 50) String description, CourseEntity course) {
+		super();
+		this.subjectId = subjectId;
+		this.subjectName = subjectName;
+		this.subject_semester = subject_semester;
+		this.description = description;
 		Course = course;
 	}
 
-	public FacultyEntity getFaculty() {
-		return faculty;
-	}
-
-	public void setFaculty(FacultyEntity faculty) {
-		this.faculty = faculty;
+	public SubjectEntity() {
+		super();
 	}
 
 	@Override
 	public String toString() {
 		return "SubjectEntity [subjectId=" + subjectId + ", subjectName=" + subjectName + ", subject_semester="
-				+ subject_semester + ", description=" + description + ", Course=" + Course + ", faculty=" + faculty
-				+ "]";
+				+ subject_semester + ", description=" + description + ", Course=" + Course + "]";
 	}
-	
 
 	
 	

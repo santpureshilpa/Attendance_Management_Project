@@ -1,41 +1,41 @@
 package com.capgemini.entity;
 
-import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
+import java.time.LocalDate;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+
 
 @Entity
-@Table(name = "Attendances")
+@Table(name = "Attendance")
 public class AttendanceEntity {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator="attendance_seq")
-	@SequenceGenerator(name="attendance_seq",sequenceName="attendnace_seq",allocationSize=1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator="attendances_generations")
+	@SequenceGenerator(name="attendances_generations",sequenceName="attendances_sequences",allocationSize=1)
 	private int attendanceId;
 
-	@NotEmpty(message="Please enter valid semester")
+    @NotEmpty(message="Please Enter Valid Semester")
 	private String semester;
 	
-	private Date currentDate;
+    @NotNull
+    private LocalDate currentDate;
 	
-	@NotEmpty(message="Please Enter Valid Status (Present/Absent)")
+    @NotEmpty(message="Please Enter Valid Status (Present/Absent)")
+    @Pattern(regexp="(absent|Absent|present|Present)", message="Please enter valid Status")
 	private String status;
-	
-	@ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.ALL)
-	private StudentEntity std;
-	
+    
+    
+    //Getters and Setters
 	public int getAttendanceId() {
 		return attendanceId;
 	}
@@ -52,10 +52,6 @@ public class AttendanceEntity {
 		this.semester = semester;
 	}
 
-  public Date getCurrentDate() { return currentDate; }
-	  
-	  public void setCurrentDate(Date currentDate) { this.currentDate = currentDate; }
-	 
 	public String getStatus() {
 		return status;
 	}
@@ -64,33 +60,14 @@ public class AttendanceEntity {
 		this.status = status;
 	}
 
-	public StudentEntity getStd() {
-		return std;
+	public LocalDate getCurrentDate() {
+		return currentDate;
 	}
 
-	public void setStd(StudentEntity std) {
-		this.std = std;
+	public void setCurrentDate(LocalDate currentDate) {
+		this.currentDate = currentDate;
 	}
-	
-
-	@Override
-	public String toString() {
-		return "AttendanceEntity [attendanceId=" + attendanceId + ", semester=" + semester + ", status=" + status
-				+ ", std=" + std + "]";
-	}
-
-	
-	/*
-	 * @ManyToOne(fetch = FetchType.LAZY)
-	 * 
-	 * @JoinColumn(name = "Attendance_Subject") private SubjectEntity subjectId;
-	 * 
-	 * @ManyToOne(fetch = FetchType.LAZY)
-	 * 
-	 * @Column(name = "student_roll_no") private long studentRollNo;
-	 */
-	
-	
-
 
 }
+
+

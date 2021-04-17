@@ -21,49 +21,40 @@ import com.capgemini.exception.StudentNotFoundException;
 import com.capgemini.services.StudentService;
 
 @RestController
-public class StudentController  {
+public class StudentController {
 	
 	@Autowired
-	StudentService studendService;
+	StudentService studentService;
 	
-	@GetMapping("/get/{studentId}") 
+	@GetMapping("/get/{studentId}")
 	public ResponseEntity<StudentEntity> getStudentById(@Valid @PathVariable int studentId) throws StudentNotFoundException
 	{
-		return new ResponseEntity<StudentEntity>(studendService.getStudentById(studentId),HttpStatus.FOUND);
+		return new ResponseEntity<StudentEntity>(studentService.getStudentById(studentId),HttpStatus.FOUND);
 	}
 	
 	@GetMapping("/get")
 	public ResponseEntity<List<StudentEntity>> getStudents()
 	{
-		return new ResponseEntity<List<StudentEntity>>(studendService.getStudents(),HttpStatus.OK);
+		return new ResponseEntity<List<StudentEntity>>(studentService.getStudents(),HttpStatus.OK);
 	}
 	
 	@PostMapping("/add")
 	public ResponseEntity<StudentEntity> addStudent(@Valid @RequestBody StudentEntity entity)
 	{
-		return new ResponseEntity<StudentEntity>(studendService.addStudent(entity),HttpStatus.CREATED);
+		return new ResponseEntity<StudentEntity>(studentService.addStudent(entity),HttpStatus.CREATED);
 	}
 	
-	@PutMapping("/update")
-	public ResponseEntity<StudentEntity> updateStudent(@Valid @RequestBody StudentEntity entity)
+	@PutMapping("/update/{studentId}")
+	public ResponseEntity<StudentEntity> updateStudent(@Valid @PathVariable int studentId, @Valid @RequestBody StudentEntity entity) throws StudentNotFoundException
 	{
-		return new ResponseEntity<StudentEntity>(studendService.updateStudent(entity),HttpStatus.ACCEPTED);
+		return new ResponseEntity<StudentEntity>(studentService.updateStudent(studentId, entity),HttpStatus.ACCEPTED);
 	}
 	
 
-	@DeleteMapping("/delete/{studentId}") 
-	public ResponseEntity<String> deleteStudent(@Valid @PathVariable int studentId) throws RecordNotFoundException 
+	@DeleteMapping("/delete/{studentId}")
+	public ResponseEntity<String> deleteStudent(@Valid @PathVariable int studentId) throws RecordNotFoundException
 	{
-		return new ResponseEntity<String>(studendService.deleteStudent(studentId),HttpStatus.ACCEPTED);
-	}
-	
-	
-	@DeleteMapping("/deleteStudents")
-	public ResponseEntity<String> deleteRecord(@Valid @RequestBody StudentEntity s)
-	{
-		studendService.deleteRecord(s);
-		return new ResponseEntity<String>("Deleted",HttpStatus.OK);
-
+		return new ResponseEntity<String>(studentService.deleteStudent(studentId),HttpStatus.ACCEPTED);
 	}
 
 

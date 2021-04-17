@@ -17,8 +17,7 @@ public class StudentServiceImpl implements StudentService{
 	StudentRepository studentRepository;
 
 	@Override
-	public StudentEntity getStudentById(int studentId) throws StudentNotFoundException {
-		
+	public StudentEntity getStudentById(int studentId) throws StudentNotFoundException{
 		Supplier<StudentNotFoundException> supplier=()->new StudentNotFoundException("no Student found with this id");
 		StudentEntity entity=studentRepository.findById(studentId).orElseThrow(supplier);
 		return entity;
@@ -26,22 +25,21 @@ public class StudentServiceImpl implements StudentService{
 
 	@Override
 	public List<StudentEntity> getStudents() {
-		
+		// TODO Auto-generated method stub
 		return studentRepository.findAll();
 	}
 
 	@Override
 	public StudentEntity addStudent(StudentEntity entity) {
-		
+		// TODO Auto-generated method stub
 		return studentRepository.save(entity);
 	}
 
 	@Override
-	public StudentEntity updateStudent(StudentEntity entity) {
+	public StudentEntity updateStudent(int studentId, StudentEntity entity) throws StudentNotFoundException{
 		
-		int Id=entity.getId();
-	
-		StudentEntity se = studentRepository.findById(Id).orElse(null);
+		Supplier<StudentNotFoundException> supplier=()->new StudentNotFoundException("No such Student Found");
+		StudentEntity se = studentRepository.findById(studentId).orElseThrow(supplier);
 		se.setFirstName(entity.getFirstName());
 		se.setLastName(entity.getLastName());
 		se.setDateOfBirth(entity.getDateOfBirth());
@@ -59,17 +57,13 @@ public class StudentServiceImpl implements StudentService{
 
 	
 	@Override
-	public String deleteStudent(int studentId) throws RecordNotFoundException {
-		Supplier<StudentNotFoundException> supplier=()->new StudentNotFoundException("This Student_id is not present");
-		StudentEntity studententity=studentRepository.findById(studentId).orElse(null);
-		studentRepository.delete(studententity); 
+	public String deleteStudent(int studentId) throws RecordNotFoundException{
+		Supplier<RecordNotFoundException> supplier=()->new RecordNotFoundException("no Student_id was found");
+		StudentEntity st=studentRepository.findById(studentId).orElseThrow(supplier);
+		studentRepository.delete(st); 
 		return "deleted successfully";
 	}
 
-	@Override
-	public String deleteRecord(StudentEntity e) {
-		studentRepository.deleteAll();
-		return "deleted successfully";
-	}
+	
 
 }

@@ -8,18 +8,14 @@ import com.capgemini.exception.StudentNotFoundException;
 
 public interface StudentService {
 
-	public StudentEntity getStudentById(int id) throws StudentNotFoundException;
+	public StudentEntity getStudentById(int studentId) throws StudentNotFoundException;
 
 	public List<StudentEntity> getStudents();
 	
 	public StudentEntity addStudent(StudentEntity entity);
 
-	public StudentEntity updateStudent(StudentEntity entity);
+	public StudentEntity updateStudent(int studentId, StudentEntity entity) throws StudentNotFoundException;
 
-	public String deleteStudent(int id) throws RecordNotFoundException;
-
-	public String deleteRecord(StudentEntity e);
-	
-	
+	public String deleteStudent(int studentId) throws RecordNotFoundException;	
 
 }

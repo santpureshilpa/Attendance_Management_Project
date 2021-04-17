@@ -1,9 +1,7 @@
 package com.capgemini.controller;
 
 import java.util.List;
-
 import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.capgemini.entity.AttendanceEntity;
+import com.capgemini.exception.AttendanceIdNotFoundException;
+import com.capgemini.exception.RecordNotFoundException;
 import com.capgemini.services.AttendanceService;
 
 @RestController
@@ -29,35 +29,29 @@ public class AttendanceController {
 	@PostMapping(path="/addAttendance")
 	public ResponseEntity<AttendanceEntity> addAttend(@Valid @RequestBody AttendanceEntity ae)
 	{
-		return new ResponseEntity<AttendanceEntity>(attendanceService.addAttendance(ae),HttpStatus.OK);
+		return new ResponseEntity<AttendanceEntity>(attendanceService.addAttendance(ae),HttpStatus.CREATED);
+	}
+
+	@PutMapping(path="/updateAttendance/{attendanceId}") 
+	public ResponseEntity<AttendanceEntity> updateAttendById(@Valid @PathVariable int attendanceId,@Valid @RequestBody AttendanceEntity entity)throws AttendanceIdNotFoundException
+	{
+		return new ResponseEntity<AttendanceEntity>(attendanceService.updateAttendanceById(attendanceId,entity),HttpStatus.ACCEPTED);
 	}
 	
-	@PutMapping(path="/updateAttendance/{attendanceId}")
-	public ResponseEntity<AttendanceEntity> updateAttendById(@Valid @PathVariable int attendanceId, @Valid @RequestBody AttendanceEntity entity)
-	{
-		return new ResponseEntity<AttendanceEntity>(attendanceService.updateAttendanceById(attendanceId,entity),HttpStatus.OK);
-	}
-	
-	@DeleteMapping(path="/deleteAttendance")
-	public String deleteAttend(@Valid @RequestBody AttendanceEntity ae)
-	{
-		return  attendanceService.deleteAttendance(ae);
-	}
 	@GetMapping(path="/getAllAttendance")
-	public ResponseEntity<List<AttendanceEntity>> getAttendance()
-	{
-		return new ResponseEntity<List<AttendanceEntity>>(attendanceService.getAttendance(),HttpStatus.OK);
+	public ResponseEntity<List<AttendanceEntity>> getAttendance() throws RecordNotFoundException{
+	   return new ResponseEntity<List<AttendanceEntity>>(attendanceService.getAttendance(),HttpStatus.FOUND);
 	}
+	
 	@GetMapping(path="/getAttendanceById/{attendanceId}")
-	public ResponseEntity<AttendanceEntity> getAttendanceById(@Valid @PathVariable int attendanceId)
+	public ResponseEntity<AttendanceEntity> getAttendanceById(@Valid @PathVariable int attendanceId) throws AttendanceIdNotFoundException
 	{
-		AttendanceEntity ae = attendanceService.getAttendanceById(attendanceId);
-		ResponseEntity re = new ResponseEntity<AttendanceEntity>(ae, HttpStatus.OK);
-		return re;
+		return new ResponseEntity<AttendanceEntity>(attendanceService.getAttendanceById(attendanceId),HttpStatus.FOUND);
 	}
-	@DeleteMapping(path="/deleteAttendance/{attendanceId}")
-	public String deleteAttendanceById(@Valid @PathVariable int attendanceId)
+	
+	@DeleteMapping(path="/deleteAttendanceById/{attendanceId}") 
+	public String deleteAttendanceById(@Valid @PathVariable int attendanceId) throws RecordNotFoundException
 	{
-		return attendanceService.deleteById(attendanceId);
+		return attendanceService.deleteById(attendanceId);	
 	}
 }

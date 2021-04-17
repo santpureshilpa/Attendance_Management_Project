@@ -2,9 +2,11 @@ package com.capgemini.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.capgemini.entity.SubjectEntity;
@@ -19,6 +21,7 @@ public class SubjectServiceImpl implements SubjectService{
 	
 	@Autowired
 	SubjectRepository subjectRepository;
+	
 	
 	@Override
 	public SubjectEntity addSubject(SubjectEntity entity) throws DuplicateRecordException{
@@ -73,6 +76,15 @@ public class SubjectServiceImpl implements SubjectService{
 		subjectRepository.save(se);
 		return se;
 	}
+
+	@Override
+	public SubjectEntity findSubjectByName(String subjectName) {
+		return subjectRepository.findBysubjectNameIgnoreCase(subjectName);
+	}
+
+	
+	
+	
 
 
 	

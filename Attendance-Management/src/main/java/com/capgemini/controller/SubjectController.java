@@ -1,6 +1,7 @@
 package com.capgemini.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.capgemini.entity.SubjectEntity;
@@ -63,13 +65,24 @@ public class SubjectController {
 	
 	@GetMapping(path="/getAllSubjects")
 	public ResponseEntity<List<SubjectEntity>> getAllSubjects()
-	{
-		
+	{		
 		List<SubjectEntity> se = subjectService.getAllSubjects();
 		ResponseEntity re = new ResponseEntity<List<SubjectEntity>>(se, HttpStatus.OK);
 		return re;
 		
 	}
+
+	
+	  @GetMapping(path="/getSubjectsByName/{subjectName}") 
+	  public ResponseEntity<SubjectEntity> findSubjectByName(@PathVariable String subjectName)
+	 {
+		  SubjectEntity se=subjectService.findSubjectByName(subjectName);
+		  ResponseEntity<SubjectEntity> re=new ResponseEntity<SubjectEntity>(se,HttpStatus.FOUND);
+		  return re;
+	  
+	  
+	  }
+	 
 	@DeleteMapping(path="/deleteSubject/{subjectId}")
 	public ResponseEntity<String> deleteSubById(@Valid @PathVariable int subjectId) throws RecordNotFoundException
 	{
