@@ -17,4 +17,8 @@ public interface FacultyService {
 	public List<FacultyEntity> getAllFaculty();
 
 	FacultyEntity updateFacultyById(int facultyId, FacultyEntity se) throws FacultyNotFoundException;
+
+	List<FacultyEntity> findByfacultyName(String facultyName);
+
+	
 }

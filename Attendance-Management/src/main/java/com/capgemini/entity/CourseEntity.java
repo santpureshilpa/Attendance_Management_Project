@@ -10,9 +10,12 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
+import org.springframework.transaction.annotation.Transactional;
+
 
 @Entity
 @Table(name = "Courses")
+@Transactional
 public class CourseEntity {
 	
 	@Id

@@ -31,7 +31,7 @@ public class SubjectEntity {
 	private String subjectName;
 	
 	@NotEmpty
-	private String subject_semester;
+	private String subjectSemester;
 	
 	@NotEmpty
 	@Size(max = 50)
@@ -63,16 +63,16 @@ public class SubjectEntity {
 
 	public void setSubjectName(String subjectName) {
 		this.subjectName = subjectName;
-	}
-
-	public String getSubject_semester() {
-		return subject_semester;
-	}
-
-	public void setSubject_semester(String subject_semester) {
-		this.subject_semester = subject_semester;
-	}
+	}	
 	
+	public String getSubjectSemester() {
+		return subjectSemester;
+	}
+
+	public void setSubjectSemester(String subjectSemester) {
+		this.subjectSemester = subjectSemester;
+	}
+
 	public String getDescription() {
 		return description;
 	}
@@ -87,7 +87,7 @@ public class SubjectEntity {
 		super();
 		this.subjectId = subjectId;
 		this.subjectName = subjectName;
-		this.subject_semester = subject_semester;
+		this.subjectSemester = subjectSemester;
 		this.description = description;
 		Course = course;
 	}
@@ -98,8 +98,8 @@ public class SubjectEntity {
 
 	@Override
 	public String toString() {
-		return "SubjectEntity [subjectId=" + subjectId + ", subjectName=" + subjectName + ", subject_semester="
-				+ subject_semester + ", description=" + description + ", Course=" + Course + "]";
+		return "SubjectEntity [subjectId=" + subjectId + ", subjectName=" + subjectName + ", subjectSemester="
+				+ subjectSemester + ", description=" + description + ", Course=" + Course + "]";
 	}
 
 	

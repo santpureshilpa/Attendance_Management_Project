@@ -28,7 +28,7 @@ public class SubjectServiceImpl implements SubjectService{
 		List<SubjectEntity> sub=this.getAllSubjects();
 		for(SubjectEntity subjectentity:sub)
 		{
-			if(subjectentity.getSubjectName().equals(entity.getSubjectName()))
+			if(subjectentity.getSubjectName().equalsIgnoreCase(entity.getSubjectName()))
 			{
 				throw new DuplicateRecordException("The name of Subject is already exist......Provide different SubjectName");
 			}
@@ -71,7 +71,7 @@ public class SubjectServiceImpl implements SubjectService{
 		Supplier<SubjectNotFoundException> supplier=()->new SubjectNotFoundException("Subject of " + subjectId + " id is not present in database");
 		SubjectEntity se = subjectRepository.findById(subjectId).orElseThrow(supplier);
 		se.setSubjectName(fe.getSubjectName());
-		se.setSubject_semester(fe.getSubject_semester());
+		se.setSubjectSemester(fe.getSubjectSemester());
 		se.setDescription(fe.getDescription());
 		subjectRepository.save(se);
 		return se;
@@ -81,6 +81,15 @@ public class SubjectServiceImpl implements SubjectService{
 	public SubjectEntity findSubjectByName(String subjectName) {
 		return subjectRepository.findBysubjectNameIgnoreCase(subjectName);
 	}
+
+	
+	  @Override 
+	  public List<SubjectEntity> findSubjectBySemester(String subjectSemester)
+	  { 
+		  return subjectRepository.findBysubjectSemester(subjectSemester);
+	  
+	  }
+	 
 
 	
 	

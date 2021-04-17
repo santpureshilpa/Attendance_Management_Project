@@ -13,8 +13,8 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 
-@Entity
-@Table(name = "Faculties")
+@Entity(name="faculties")
+@Table(name = "faculties")
 public class FacultyEntity {
 	
 	@Id
@@ -22,7 +22,7 @@ public class FacultyEntity {
 	@SequenceGenerator(name="faculties_generations", sequenceName = "faculties_sequences", allocationSize=1)
 	private int facultyId;
 	
-    @Column(name = "faculty_user_name") 
+    @Column(name = "facultyUsername") 
 	@NotEmpty
 	@Size(min=5, max = 30, message = "Not a valid name")
     private String facultyName;

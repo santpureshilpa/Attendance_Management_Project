@@ -2,6 +2,8 @@ package com.capgemini.services;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import com.capgemini.entity.CourseEntity;
 
 public interface CourseService {
@@ -17,6 +19,8 @@ public interface CourseService {
 	public CourseEntity updateByCourseId(int courseid, CourseEntity entity);
 	
 	public String deleteAllCourse();
+
+	public CourseEntity findCourseByName(String courseName);
 
 }
 

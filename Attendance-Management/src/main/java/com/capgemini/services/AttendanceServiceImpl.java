@@ -76,4 +76,17 @@ public class AttendanceServiceImpl implements AttendanceService{
 		return "Deleted";
 	}
 
+	@Override
+	public List<AttendanceEntity> findAttendanceByStatus(String status) {
+		return attendanceRepository.findBystatus(status);
+	}
+
+	@Override
+	public AttendanceEntity findAttendanceBySemester(String semester) {
+		return attendanceRepository.findBysemester(semester);
+	}
+
+	
+
+
 }

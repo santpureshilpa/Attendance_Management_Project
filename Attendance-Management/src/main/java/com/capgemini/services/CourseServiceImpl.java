@@ -5,11 +5,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.capgemini.entity.CourseEntity;
 import com.capgemini.repository.CourseRepository;
 
 @Service
+@Transactional
 public class CourseServiceImpl implements CourseService {
 	
 	@Autowired
@@ -28,6 +30,7 @@ public class CourseServiceImpl implements CourseService {
 		courseRepository.deleteById(courseId);
 	    return "Deleted By Course Id";
 	}
+
 
 	@Override
 	public List<CourseEntity> getCourse() {
@@ -58,6 +61,12 @@ public class CourseServiceImpl implements CourseService {
 	    return "Deleted";
 	}
 
+	@Override
+	public CourseEntity findCourseByName(String courseName) {
+		return courseRepository.findBycourseName(courseName);
+	}
+
+	
 	
 	
 	

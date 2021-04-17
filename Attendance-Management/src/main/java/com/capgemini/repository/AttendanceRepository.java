@@ -10,6 +10,8 @@ import com.capgemini.entity.AttendanceEntity;
 @Repository
 public interface AttendanceRepository extends JpaRepository<AttendanceEntity,Integer>{
 
+	List<AttendanceEntity> findBystatus(String status);
 	
+	AttendanceEntity findBysemester(String semester);
 	
 }

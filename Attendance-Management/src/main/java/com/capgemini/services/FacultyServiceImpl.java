@@ -58,6 +58,14 @@ public class FacultyServiceImpl implements FacultyService {
 		facultyRepository.save(fe);
 		return fe;
 	}
+
+	
+	  @Override public List<FacultyEntity> findByfacultyName(String facultyName) {
+	  List<FacultyEntity> fe = facultyRepository.findByfacultyName(facultyName);
+	  return fe;
+	  
+	  }
+	 
 	
 	
 

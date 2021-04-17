@@ -72,16 +72,21 @@ public class SubjectController {
 		
 	}
 
-	
 	  @GetMapping(path="/getSubjectsByName/{subjectName}") 
 	  public ResponseEntity<SubjectEntity> findSubjectByName(@PathVariable String subjectName)
 	 {
 		  SubjectEntity se=subjectService.findSubjectByName(subjectName);
 		  ResponseEntity<SubjectEntity> re=new ResponseEntity<SubjectEntity>(se,HttpStatus.FOUND);
 		  return re;
-	  
-	  
 	  }
+	  
+	
+	  @GetMapping(path="/getSubjectsBySemester/{subjectSemester}") public
+	  ResponseEntity<List<SubjectEntity>> findSubjectBySemester(String
+	  subjectSemester) { List<SubjectEntity>
+	  se=subjectService.findSubjectBySemester(subjectSemester); ResponseEntity
+	  re=new ResponseEntity<List<SubjectEntity>>(se,HttpStatus.FOUND); return re; }
+	 
 	 
 	@DeleteMapping(path="/deleteSubject/{subjectId}")
 	public ResponseEntity<String> deleteSubById(@Valid @PathVariable int subjectId) throws RecordNotFoundException

@@ -7,6 +7,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import com.capgemini.entity.AttendanceEntity;
+import com.capgemini.entity.SubjectEntity;
 
 public interface AttendanceService {
 	
@@ -23,5 +24,9 @@ public interface AttendanceService {
 	public String deleteById(int attendanceId);
 
 	public String deleteAttendance(AttendanceEntity ae);
+	
+	AttendanceEntity findAttendanceBySemester(String semester);
+
+	List<AttendanceEntity> findAttendanceByStatus(String status);
 	}
 

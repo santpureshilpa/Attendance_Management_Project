@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.capgemini.entity.AttendanceEntity;
+import com.capgemini.entity.SubjectEntity;
 import com.capgemini.exception.AttendanceIdNotFoundException;
 import com.capgemini.exception.RecordNotFoundException;
 import com.capgemini.services.AttendanceService;
@@ -47,6 +48,21 @@ public class AttendanceController {
 	public ResponseEntity<AttendanceEntity> getAttendanceById(@Valid @PathVariable int attendanceId) throws AttendanceIdNotFoundException
 	{
 		return new ResponseEntity<AttendanceEntity>(attendanceService.getAttendanceById(attendanceId),HttpStatus.FOUND);
+	}
+	
+	@GetMapping(path="/getAttendanceBySemester/{semester}") 
+	  public ResponseEntity<AttendanceEntity> findAttendanceBySemester(@PathVariable String semester)
+	 {
+		  AttendanceEntity ae=attendanceService.findAttendanceBySemester(semester);
+		  ResponseEntity<AttendanceEntity> re=new ResponseEntity<AttendanceEntity>(ae,HttpStatus.FOUND);
+		  return re;
+	  }
+	  
+	
+	@GetMapping(path="/getAttendanceByStatus/{status}")
+	public ResponseEntity<List<AttendanceEntity>> findAttendanceByStatus(@PathVariable String status)
+	{
+		return new ResponseEntity<List<AttendanceEntity>>(attendanceService.findAttendanceByStatus(status),HttpStatus.FOUND);
 	}
 	
 	@DeleteMapping(path="/deleteAttendanceById/{attendanceId}") 

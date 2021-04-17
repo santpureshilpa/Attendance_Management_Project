@@ -26,4 +26,9 @@ public interface SubjectService {
 
 	SubjectEntity findSubjectByName(String subjectName);
 
+	List<SubjectEntity> findSubjectBySemester(String subject_semester);
+
+	
+	
+
 }

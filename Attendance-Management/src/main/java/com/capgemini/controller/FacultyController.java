@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.capgemini.entity.FacultyEntity;
+import com.capgemini.entity.SubjectEntity;
 import com.capgemini.exception.FacultyNotFoundException;
 import com.capgemini.exception.RecordNotFoundException;
 import com.capgemini.services.FacultyService;
@@ -42,6 +43,16 @@ public class FacultyController {
 		FacultyEntity fe = facultyServices.getFacultyById(facultyId);
 		return new ResponseEntity<FacultyEntity>(fe, HttpStatus.FOUND);
 	}
+	
+	
+	  @GetMapping(path="/getFacultyByName/{facultyName}") public
+	  ResponseEntity<List<FacultyEntity>> findFacultyByName(@PathVariable String
+	  facultyName) { List<FacultyEntity>
+	  fe=facultyServices.findByfacultyName(facultyName); return new
+	  ResponseEntity<List<FacultyEntity>>(fe,HttpStatus.OK);
+	  
+	  }
+	 
 	
 	@DeleteMapping(path="/deleteFacultyById/{facultyId}")
 	public ResponseEntity<String> deleteFacultyById(@Valid @PathVariable int facultyId) throws RecordNotFoundException
