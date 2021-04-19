@@ -13,12 +13,11 @@ import com.capgemini.entity.SubjectEntity;
 @Repository
 public interface SubjectRepository extends JpaRepository<SubjectEntity,Integer>
 {
+	//This Query will generate the list of Subject details by checking the subject name & ignoring case
+	List<SubjectEntity> findBysubjectNameIgnoreCaseContains(String subjectName);
 
-SubjectEntity findBysubjectNameIgnoreCase(String subjectName);
-
-//@Query("from Subjects where subject_semester = ?1")
-
-List<SubjectEntity> findBysubjectSemester(String subjectSemester);
+	//@Query("from Subjects where subject_semester = ?1")
+   List<SubjectEntity> findBysubjectSemester(String subjectSemester);
 
 	
 	

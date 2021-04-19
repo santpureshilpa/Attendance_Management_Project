@@ -3,22 +3,30 @@ package com.capgemini.services;
 import java.util.List;
 
 import com.capgemini.entity.FacultyEntity;
-import com.capgemini.exception.FacultyNotFoundException;
+import com.capgemini.exception.FacultyIdNotFoundException;
 import com.capgemini.exception.RecordNotFoundException;
 
 public interface FacultyService {
 	
+	//For adding the details of the faculty 
 	public FacultyEntity addFaculty(FacultyEntity entity);
+	
+    //To get the faculty by facultyID
+	public FacultyEntity getFacultyById(int facultyId) throws FacultyIdNotFoundException;
 
-	public FacultyEntity getFacultyById(int facultyId) throws FacultyNotFoundException;
-
+	//To delete the faculty by facultyID
 	public String deleteFacultyById(int facultyId) throws RecordNotFoundException;
 
-	public List<FacultyEntity> getAllFaculty();
+	//To get the list of all the faculty in the database
+	public List<FacultyEntity> getAllFaculty() throws RecordNotFoundException;
 
-	FacultyEntity updateFacultyById(int facultyId, FacultyEntity se) throws FacultyNotFoundException;
+	//To update the faculty by facultyID
+	FacultyEntity updateFacultyById(int facultyId, FacultyEntity se) throws FacultyIdNotFoundException;
+	
+	//To get the list of faculty by using faculty name
+	List<FacultyEntity> findByfacultyName(String facultyName) throws RecordNotFoundException;
 
-	List<FacultyEntity> findByfacultyName(String facultyName);
+	public boolean getFacultyExistById(int facultyId);
 
 	
 }

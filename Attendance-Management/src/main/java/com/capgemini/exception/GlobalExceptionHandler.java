@@ -4,13 +4,11 @@ import java.time.LocalDateTime;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
-
-
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler 
 {
 	
@@ -20,8 +18,8 @@ public class GlobalExceptionHandler
 		  return new ResponseEntity<ErrorDetails>(errorDetails,HttpStatus.BAD_REQUEST);
 		}
 	
-	    @ExceptionHandler(DuplicateRecordException.class)
-	    public ResponseEntity<ErrorDetails> DuplicateRecordException(DuplicateRecordException ex, WebRequest request) {
+	    @ExceptionHandler(AttendanceExistsException.class)
+	    public ResponseEntity<ErrorDetails> AttendanceExistsException(AttendanceExistsException ex, WebRequest request) {
 	         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
 	         return new ResponseEntity<ErrorDetails>(errorDetails, HttpStatus.CONFLICT);
 	    }
@@ -31,21 +29,20 @@ public class GlobalExceptionHandler
 	         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
 	         return new ResponseEntity<ErrorDetails>(errorDetails, HttpStatus.NOT_FOUND);
 	    }
-	    
-	    @ExceptionHandler(StudentNotFoundException.class)
-	    public ResponseEntity<ErrorDetails> StudentNotFoundException(StudentNotFoundException ex, WebRequest request) {
-	         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
-	         return new ResponseEntity<ErrorDetails>(errorDetails, HttpStatus.NOT_FOUND);
-	    }
-	    
-	    @ExceptionHandler(SubjectNotFoundException.class)
-	    public ResponseEntity<ErrorDetails> SubjectNotFoundException(SubjectNotFoundException ex, WebRequest request) {
-	         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
-	         return new ResponseEntity<ErrorDetails>(errorDetails, HttpStatus.NOT_FOUND);
-	    }
+	 
 	    @ExceptionHandler(Exception.class) 
-		  public ResponseEntity<ErrorDetails> globleExcpetionHandler(Exception ex, WebRequest request) { ErrorDetails
-		  errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),request.getDescription(false)); 
-		  return new ResponseEntity<>(errorDetails,HttpStatus.INTERNAL_SERVER_ERROR); }
+		  public ResponseEntity<ErrorDetails> globalExceptionHandler(Exception ex, WebRequest request) { 
+	         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),request.getDescription(false)); 
+		     return new ResponseEntity<>(errorDetails,HttpStatus.INTERNAL_SERVER_ERROR); }
+	    
+	    @ExceptionHandler(AttendanceIdNotFoundException.class) 
+		  public ResponseEntity<ErrorDetails> AttendanceIdNotFoundException(Exception ex, WebRequest request) { 
+	         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),request.getDescription(false)); 
+		     return new ResponseEntity<>(errorDetails,HttpStatus.NOT_FOUND); }
+	    
+	    @ExceptionHandler(CourseIdNotFoundException.class) 
+		  public ResponseEntity<ErrorDetails> CourseIdNotFoundException(Exception ex, WebRequest request) { 
+	         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),request.getDescription(false)); 
+		     return new ResponseEntity<>(errorDetails,HttpStatus.NOT_FOUND); }
 
 }

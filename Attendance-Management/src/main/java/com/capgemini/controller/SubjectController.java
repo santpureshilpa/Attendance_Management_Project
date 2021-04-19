@@ -19,9 +19,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.capgemini.entity.SubjectEntity;
+import com.capgemini.exception.CourseIdNotFoundException;
 import com.capgemini.exception.DuplicateRecordException;
+import com.capgemini.exception.FacultyIdNotFoundException;
 import com.capgemini.exception.RecordNotFoundException;
 import com.capgemini.exception.SubjectNotFoundException;
+import com.capgemini.services.*;
 import com.capgemini.services.SubjectService;
 
 @RestController
@@ -31,69 +34,78 @@ public class SubjectController {
 	@Autowired
 	SubjectService subjectService;
 	
+	//Add Subject Details
 	@PostMapping(path="/addSubject") 
 	public ResponseEntity<SubjectEntity> addSubject(@Valid @RequestBody SubjectEntity se) throws DuplicateRecordException 
 	{
 		SubjectEntity se1 = subjectService.addSubject(se);
-		
 		return new ResponseEntity<SubjectEntity>(se1,HttpStatus.OK);
 	}
 	
-	@DeleteMapping(path="/deleteSubject")
-	public String deleteSubject(@Valid @RequestBody SubjectEntity se)
-	{
-		String s1 = subjectService.deleteSubject(se);
-		
-		return s1;
-	}
+	//Update Subject Details By using Student ID
 	@PutMapping(path="/updateSubjectById/{subjectId}")
 	public ResponseEntity<SubjectEntity> updateSubjectById(@Valid @PathVariable int subjectId, @Valid @RequestBody SubjectEntity fe)
-	throws SubjectNotFoundException
+	      throws SubjectNotFoundException
 	{
 		SubjectEntity se = subjectService.updateSubjectById(subjectId, fe);
 		ResponseEntity re = new ResponseEntity<SubjectEntity>(se, HttpStatus.OK);
 		return re;
 	}
 	
+	//Retrieve Subject Details By using Subject ID
 	@GetMapping(path="/getSubjectById/{subjectId}") 
-	public ResponseEntity <SubjectEntity> getSubjectById(@Valid @PathVariable int subjectId) throws SubjectNotFoundException
+	public ResponseEntity <SubjectEntity> getSubjectById(@PathVariable int subjectId) throws SubjectNotFoundException
 	{
 		SubjectEntity se = subjectService.getSubjectById(subjectId);
-		ResponseEntity re = new ResponseEntity<SubjectEntity>(se, HttpStatus.OK);
-		return re;
+		return new ResponseEntity<SubjectEntity>(se, HttpStatus.OK);
 	}
 	
+	//Retrieve All Details of Subjects
 	@GetMapping(path="/getAllSubjects")
-	public ResponseEntity<List<SubjectEntity>> getAllSubjects()
+	public ResponseEntity<List<SubjectEntity>> getAllSubjects() throws RecordNotFoundException
 	{		
 		List<SubjectEntity> se = subjectService.getAllSubjects();
 		ResponseEntity re = new ResponseEntity<List<SubjectEntity>>(se, HttpStatus.OK);
 		return re;
 		
-	}
-
-	  @GetMapping(path="/getSubjectsByName/{subjectName}") 
-	  public ResponseEntity<SubjectEntity> findSubjectByName(@PathVariable String subjectName)
-	 {
-		  SubjectEntity se=subjectService.findSubjectByName(subjectName);
-		  ResponseEntity<SubjectEntity> re=new ResponseEntity<SubjectEntity>(se,HttpStatus.FOUND);
-		  return re;
-	  }
-	  
+	}	
 	
-	  @GetMapping(path="/getSubjectsBySemester/{subjectSemester}") public
-	  ResponseEntity<List<SubjectEntity>> findSubjectBySemester(String
-	  subjectSemester) { List<SubjectEntity>
-	  se=subjectService.findSubjectBySemester(subjectSemester); ResponseEntity
-	  re=new ResponseEntity<List<SubjectEntity>>(se,HttpStatus.FOUND); return re; }
+	//Retrieve List of Subjects
+    @GetMapping(path="/getSubjectsByName/{subjectName}") 
+	 public ResponseEntity<List<SubjectEntity>> findSubjectByName(@PathVariable String subjectName)
+	         throws RecordNotFoundException
+     {
+		  List<SubjectEntity> se=subjectService.findSubjectByName(subjectName);
+		  ResponseEntity<List<SubjectEntity>> re=new ResponseEntity<List<SubjectEntity>>(se,HttpStatus.FOUND);
+		  return re;
 	 
+	  }
 	 
+    //Delete subjects details by subject id
 	@DeleteMapping(path="/deleteSubject/{subjectId}")
 	public ResponseEntity<String> deleteSubById(@Valid @PathVariable int subjectId) throws RecordNotFoundException
 	{
 		subjectService.deleteSubById(subjectId);
-		
-		ResponseEntity re=new ResponseEntity<String>("Deleted",HttpStatus.OK);
-		return re;
+		return new ResponseEntity<String>("Deleted",HttpStatus.OK);
 	}
+	
+	//Add Subject details with respect to Faculty Id & Course Id
+	@PostMapping(path="/addSubjectwithFC/{facultyId}/{courseId}") 
+	public ResponseEntity<SubjectEntity> addSubjectwithFC(@Valid @RequestBody SubjectEntity entity, @Valid @PathVariable int facultyId,@Valid @PathVariable int courseId) throws FacultyIdNotFoundException,CourseIdNotFoundException, DuplicateRecordException
+	{
+		SubjectEntity se1 = subjectService.addSubjectwithFC(entity,facultyId,courseId);
+		
+		return new ResponseEntity<SubjectEntity>(se1,HttpStatus.OK);
+	}
+	
+	//Retrieve Subject details by semester
+	@GetMapping(path="/getSubjectsBySemester/{subjectSemester}") 
+	public ResponseEntity<List<SubjectEntity>> findSubjectBySemester(String subjectSemester) 
+			throws RecordNotFoundException
+	 { 
+		  List<SubjectEntity>se=subjectService.findSubjectBySemester(subjectSemester); 
+		  ResponseEntity re=new ResponseEntity<List<SubjectEntity>>(se,HttpStatus.FOUND); 
+		  return re; 
+	  }
+	
 }

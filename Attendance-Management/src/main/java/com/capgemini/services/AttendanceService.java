@@ -8,25 +8,32 @@ import javax.validation.Valid;
 
 import com.capgemini.entity.AttendanceEntity;
 import com.capgemini.entity.SubjectEntity;
+import com.capgemini.exception.AttendanceIdNotFoundException;
+import com.capgemini.exception.RecordNotFoundException;
+import com.capgemini.exception.StudentNotFoundException;
+import com.capgemini.exception.SubjectNotFoundException;
 
 public interface AttendanceService {
 	
-	public AttendanceEntity addAttendance(AttendanceEntity entity);
-	
-	public String deleteAllAttendance();
-	
-	public List<AttendanceEntity> getAttendance();
-	
-	public AttendanceEntity getAttendanceById(int attendanceId);
-	
-	public AttendanceEntity updateAttendanceById(int attendanceId,AttendanceEntity entity);
-	
-	public String deleteById(int attendanceId);
+	   //For Getting the details of all the attendance present in the database
+		List<AttendanceEntity> getAttendance() throws RecordNotFoundException;
+			
+		//For Updating the details of the Attendance By Attendance ID
+		AttendanceEntity updateAttendanceById(int attendanceId,AttendanceEntity entity)throws AttendanceIdNotFoundException;
+		
+		//For deleting records of Attendance by Attendance ID
+		String deleteById(int attendanceId) throws RecordNotFoundException;
+		
+		//For adding attendance using StudentID and SubjectID
+		AttendanceEntity addAttendanceWithStudentIdAndSubjectId(AttendanceEntity entity, int studentId, int subjectId) 
+				throws StudentNotFoundException, SubjectNotFoundException;
+		
+		//For Getting attendance according to the Semester
+		List<AttendanceEntity> findAttendanceBySemester(String semester)throws RecordNotFoundException;
 
-	public String deleteAttendance(AttendanceEntity ae);
-	
-	AttendanceEntity findAttendanceBySemester(String semester);
+		//For Getting the List of Students who are present or absent
+		List<AttendanceEntity> findAttendanceByStatus(String status) throws RecordNotFoundException;
 
-	List<AttendanceEntity> findAttendanceByStatus(String status);
+		boolean getAttendanceExistById(int attendanceId);
 	}
 

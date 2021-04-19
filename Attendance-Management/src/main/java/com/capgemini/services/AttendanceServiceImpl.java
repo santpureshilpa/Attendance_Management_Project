@@ -2,91 +2,118 @@ package com.capgemini.services;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.capgemini.entity.AttendanceEntity;
+import com.capgemini.entity.StudentEntity;
+import com.capgemini.entity.SubjectEntity;
+import com.capgemini.exception.AttendanceIdNotFoundException;
+import com.capgemini.exception.DuplicateRecordException;
+import com.capgemini.exception.RecordNotFoundException;
+import com.capgemini.exception.StudentNotFoundException;
+import com.capgemini.exception.SubjectNotFoundException;
 import com.capgemini.repository.AttendanceRepository;
+import com.capgemini.repository.StudentRepository;
+import com.capgemini.repository.SubjectRepository;
 
 @Service
 public class AttendanceServiceImpl implements AttendanceService{
 	
-	List<AttendanceEntity> le;
+	List<AttendanceEntity> attendanceList;
 	
 	@Autowired
 	AttendanceRepository attendanceRepository;
+	
+	@Autowired
+	StudentRepository studentRepository;
+	
+	@Autowired
+	StudentService studentService;
+	
+	@Autowired
+	SubjectService subjectService;
+	
+	@Autowired
+	SubjectRepository subjectRepository;
 
+	//For Getting the details of all the attendance present in the database
 	@Override
-	public AttendanceEntity addAttendance(AttendanceEntity entity)
-	{
-		return attendanceRepository.save(entity);	
+	public List<AttendanceEntity> getAttendance() throws RecordNotFoundException{
+		attendanceList = new ArrayList<>();
+		attendanceList = attendanceRepository.findAll();
+		if(attendanceList.isEmpty())
+			throw new RecordNotFoundException("No Data In The Database Available");
+		return attendanceList;
 	}
-
-	/*
-	 * @Override public AttendanceEntity updateAttendance(AttendanceEntity entity) {
-	 * int id = entity.getAttendanceId(); AttendanceEntity ae = (AttendanceEntity)
-	 * arepo.findById(id).orElse(null); //ae.setDate(entity.getDate());
-	 * ae.setSemester(entity.getSemester()); ae.setStatus(entity.getStatus());
-	 * arepo.save(ae); return ae; }
-	 */
-
+    
+	//For Updating the details of the Attendance By Attendance ID
 	@Override
-	public String deleteAllAttendance() {
-		attendanceRepository.deleteAll();
-        return "Deleted All The Record";
-	}
-
-	@Override
-	public List<AttendanceEntity> getAttendance() {
-		le = new ArrayList<>();
-		le = attendanceRepository.findAll();
-		return le;
-	}
-
-	@Override
-	public AttendanceEntity getAttendanceById(int attendanceId) {
-		
-		//AttendanceEntity e = arepo.findByAttendanceId(attendanceId);
-		AttendanceEntity e = attendanceRepository.findById(attendanceId).orElse(null);
-		 return e;
+	public AttendanceEntity updateAttendanceById(int attendanceId, AttendanceEntity entity) throws AttendanceIdNotFoundException{
+		Supplier<AttendanceIdNotFoundException> supplier = ()-> new AttendanceIdNotFoundException("Given Id Is Not Present In The Database");
+		AttendanceEntity attendanceEntity = attendanceRepository.findById(attendanceId).orElseThrow(supplier);
+		attendanceEntity.setSemester(entity.getSemester());
+		attendanceEntity.setStatus(entity.getStatus());
+		attendanceEntity.setCurrentDate(entity.getCurrentDate());
+	    attendanceRepository.save(attendanceEntity);
+	    return attendanceEntity;
 	}
 	
+	//For deleting records of Attendance by Attendance ID
 	@Override
-	public AttendanceEntity updateAttendanceById(int attendanceId, AttendanceEntity entity) {
-		AttendanceEntity ae = attendanceRepository.findById(attendanceId).orElse(null);
-	    ae.setSemester(entity.getSemester());
-	    ae.setStatus(entity.getStatus());
-	    attendanceRepository.save(ae);
-	    return ae;
-	}
-
-	@Override
-	public String deleteById(int attendanceId) {
+	public String deleteById(int attendanceId) throws RecordNotFoundException {
+		Supplier<RecordNotFoundException> supplier = ()-> new RecordNotFoundException("Given Id Is Not Present In The Database");
+		attendanceRepository.findById(attendanceId).orElseThrow(supplier);
 		attendanceRepository.deleteById(attendanceId);
 		return "DELETED BY ID";
 	}
 
+	//For adding attendance using student ID and suject ID
 	@Override
-	public String deleteAttendance(AttendanceEntity ae) {
-		
-		attendanceRepository.delete(ae);
-		
-		return "Deleted";
-	}
-
-	@Override
-	public List<AttendanceEntity> findAttendanceByStatus(String status) {
-		return attendanceRepository.findBystatus(status);
-	}
-
-	@Override
-	public AttendanceEntity findAttendanceBySemester(String semester) {
-		return attendanceRepository.findBysemester(semester);
-	}
-
+    public AttendanceEntity addAttendanceWithStudentIdAndSubjectId(AttendanceEntity entity, int studentId, int subjectId)
+    		throws StudentNotFoundException, SubjectNotFoundException
+	{
+		StudentEntity student;
+		SubjectEntity subject;
+		List<AttendanceEntity> entities = new ArrayList<>();
 	
-
-
+		Supplier<StudentNotFoundException> supplier1 = ()-> new StudentNotFoundException("Given Student Id Is Not Present Database");
+		student = studentRepository.findById(studentId).orElseThrow(supplier1);
+		entity.setStudentEntity(student);
+		Supplier<SubjectNotFoundException> supplier2 = ()-> new SubjectNotFoundException("Given Subject Id Is Not Present Database");
+		subject = subjectRepository.findById(subjectId).orElseThrow(supplier2);
+		entity.setSubjectEntity(subject);
+		attendanceRepository.save(entity);
+	    entities.add(entity);
+	    student.setAttendanceList(entities);
+		return entity;
+	}
+	
+	//For Getting the List of Students who are present or absent
+	@Override
+	public List<AttendanceEntity> findAttendanceByStatus(String status) throws RecordNotFoundException  {
+		List<AttendanceEntity> entity = attendanceRepository.findByStatusIgnoreCase(status);
+		if(entity.isEmpty())
+			throw new RecordNotFoundException("No Such Record Found");
+		return entity;
+	}
+	
+    //To get the attendance by semester
+	@Override
+	public List<AttendanceEntity> findAttendanceBySemester(String semester) throws RecordNotFoundException {
+		List<AttendanceEntity> entity = (List<AttendanceEntity>) attendanceRepository.findBySemester(semester);
+		if(entity.isEmpty())
+			throw new RecordNotFoundException("No Such Record Found");
+		return entity;
+	}
+	
+    
+	@Override
+	public boolean getAttendanceExistById(int attendanceId)
+	{
+		return attendanceRepository.existsById(attendanceId);
+	}
+	
+	
 }

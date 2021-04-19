@@ -2,18 +2,23 @@ package com.capgemini.services;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Service;
 
+import com.capgemini.entity.CourseEntity;
+import com.capgemini.entity.FacultyEntity;
+import com.capgemini.entity.StudentEntity;
 import com.capgemini.entity.SubjectEntity;
+import com.capgemini.exception.CourseIdNotFoundException;
 import com.capgemini.exception.DuplicateRecordException;
+import com.capgemini.exception.FacultyIdNotFoundException;
 import com.capgemini.exception.RecordNotFoundException;
-import com.capgemini.exception.StudentNotFoundException;
 import com.capgemini.exception.SubjectNotFoundException;
+import com.capgemini.repository.CourseRepository;
+import com.capgemini.repository.FacultyRepository;
 import com.capgemini.repository.SubjectRepository;
 
 @Service
@@ -22,10 +27,23 @@ public class SubjectServiceImpl implements SubjectService{
 	@Autowired
 	SubjectRepository subjectRepository;
 	
+	@Autowired
+	CourseRepository courseRepository;
 	
+	@Autowired
+	FacultyRepository facultyRepository;
+	
+	@Autowired
+	FacultyService facultyService;
+	
+	@Autowired
+	CourseService courseService;
+	
+	//For Adding the Subject Record
 	@Override
-	public SubjectEntity addSubject(SubjectEntity entity) throws DuplicateRecordException{
-		List<SubjectEntity> sub=this.getAllSubjects();
+	public SubjectEntity addSubject(SubjectEntity entity) throws DuplicateRecordException
+	{
+		List<SubjectEntity> sub=subjectRepository.findAll();//this.getAllSubjects();
 		for(SubjectEntity subjectentity:sub)
 		{
 			if(subjectentity.getSubjectName().equalsIgnoreCase(entity.getSubjectName()))
@@ -37,38 +55,39 @@ public class SubjectServiceImpl implements SubjectService{
 		return subjectentity;
 	}
 
-	@Override
-	public String deleteSubject(SubjectEntity entity) {
-		subjectRepository.delete(entity);
-		return "Deleted";
-	}
-	
+	//For Deleting the Subject Entity by using subject Id
 	  @Override 
 	  public String deleteSubById(int subjectId) 
 	  {
-		  SubjectEntity subjectentity=subjectRepository.findById(subjectId).orElse(null); 
+		  subjectRepository.findById(subjectId).orElse(null); 
 		  subjectRepository.deleteById(subjectId);
-	  return "Deleted"; }
+	  return "Deleted"; 
+	  }
 	 
-	
-	
-	
+	//For getting the subject details by subject Id
 	@Override
-	public SubjectEntity getSubjectById(int subjectId) throws SubjectNotFoundException {
+	public SubjectEntity getSubjectById(int subjectId) throws SubjectNotFoundException 
+	{
 		Supplier<SubjectNotFoundException> supplier=()->new SubjectNotFoundException("Subject not found with this id");
-      SubjectEntity subjectentity = subjectRepository.findById(subjectId).orElseThrow(supplier);
+        SubjectEntity subjectentity = subjectRepository.findById(subjectId).orElseThrow(supplier);
 		return subjectentity;
 	}
+	
+	//For Getting the list of the details of all the subjects
 	@Override
-	public List<SubjectEntity> getAllSubjects() {
+	public List<SubjectEntity> getAllSubjects() throws RecordNotFoundException 
+	{
 		List<SubjectEntity> subjectentity = new ArrayList<SubjectEntity>();
 		subjectentity = subjectRepository.findAll();		
+		if(subjectentity.isEmpty())
+			throw new RecordNotFoundException("Record Not Found In The Database");
 		return subjectentity;
 	}
 
+	//For updating the subject details by using subject Id
 	@Override
 	public SubjectEntity updateSubjectById(int subjectId, SubjectEntity fe) throws SubjectNotFoundException{
-		Supplier<SubjectNotFoundException> supplier=()->new SubjectNotFoundException("Subject of " + subjectId + " id is not present in database");
+		Supplier<SubjectNotFoundException> supplier=()->new SubjectNotFoundException("Given Subject id is not present in database");
 		SubjectEntity se = subjectRepository.findById(subjectId).orElseThrow(supplier);
 		se.setSubjectName(fe.getSubjectName());
 		se.setSubjectSemester(fe.getSubjectSemester());
@@ -77,27 +96,58 @@ public class SubjectServiceImpl implements SubjectService{
 		return se;
 	}
 
+	//For Getting the list of Subject details by checking the Name of the subject
 	@Override
-	public SubjectEntity findSubjectByName(String subjectName) {
-		return subjectRepository.findBysubjectNameIgnoreCase(subjectName);
+	public List<SubjectEntity> findSubjectByName(String subjectName) throws RecordNotFoundException
+	{
+		List<SubjectEntity> se = subjectRepository.findBysubjectNameIgnoreCaseContains(subjectName);
+		if(se.isEmpty())
+			throw new RecordNotFoundException("Record Not Found In The Database");
+		return se;
 	}
 
+	//For Adding the Subject with respect to Faculty Id & Course Id
+	@Override
+	public SubjectEntity addSubjectwithFC(SubjectEntity entity, int facultyId, int courseId) throws FacultyIdNotFoundException, CourseIdNotFoundException, DuplicateRecordException
+	{
+		List<SubjectEntity> le = new ArrayList<>();
+		List<SubjectEntity> le1 = subjectRepository.findAll();
+		for(SubjectEntity subjectEntity:le1)
+		{
+			if(subjectEntity.getSubjectName().equalsIgnoreCase(entity.getSubjectName()))
+			{
+				throw new DuplicateRecordException("Subject Already Present! Please Provide different Subject Name");
+			}
+		}
+		FacultyEntity faculty;
+		CourseEntity course;
+		Supplier<FacultyIdNotFoundException> supplier1 = ()-> new FacultyIdNotFoundException("Faculty with given Id is not availabe");
+		faculty = facultyRepository.findById(facultyId).orElseThrow(supplier1);
+		Supplier<CourseIdNotFoundException> supplier2 = ()-> new CourseIdNotFoundException("Course with given Id is not availabe");
+		course = courseRepository.findById(courseId).orElseThrow(supplier2);
+		entity.setCourse(course);
+		entity.setFacultyentity(faculty);
+		subjectRepository.save(entity);
+		le.add(entity);
+		faculty.setSubjectList(le);
+		course.setSubjectList(le);
+        return entity;
+	}
 	
-	  @Override 
-	  public List<SubjectEntity> findSubjectBySemester(String subjectSemester)
+	//For Getting the list of subject details by checking the semester
+	 @Override 
+	  public List<SubjectEntity> findSubjectBySemester(String subjectSemester) throws RecordNotFoundException
 	  { 
-		  return subjectRepository.findBysubjectSemester(subjectSemester);
+		 List<SubjectEntity> se = subjectRepository.findBysubjectSemester(subjectSemester);
+		 if(se.isEmpty())
+			 throw new RecordNotFoundException("Data Not Found In The Database");
+		  return se;
 	  
 	  }
-	 
 
-	
-	
-	
-
-
-	
-
-	
+	@Override
+	public boolean getSubjectExistById(int subjectId) {
+		return subjectRepository.existsById(subjectId);
+	}
 
 }
